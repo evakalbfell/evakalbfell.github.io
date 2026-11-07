@@ -107,6 +107,23 @@
   .hero .intro { margin-top: 32px; max-width: 34ch; font-size: 1.1875rem; transition: opacity .6s ease; }
   body.animating .intro { opacity: 0; }
   .hero .intro strong { font-weight: 500; }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 44px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: opacity .5s ease, color .2s ease;
+  }
+  .more svg { color: var(--coral); }
+  .more:hover { color: var(--coral); }
+  .more.gone { opacity: 0; pointer-events: none; }
+  body.animating .more { opacity: 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
 
   /* Sections */
   section { padding-top: 56px; padding-bottom: 56px; border-top: 2px solid var(--rule); }
@@ -179,12 +196,13 @@
     <span class="line">Psychologist.<span class="caret idle" aria-hidden="true"></span></span>
   </h1>
   <p class="intro">I lead AI products from first idea to production. <strong>VP Product at Frontnow, Berlin.</strong></p>
+  <a class="more" href="#about">Learn more <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9l8 8 8-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </header>
 
 <main>
   <section class="wrap" id="about">
     <h2>About</h2>
-    <p>I studied psychology to understand how people think and decide. Then I learned to build software so I could stop handing my ideas to someone else. Today I combine both: leading AI products that help real people make real decisions.</p>
+    <p>I studied psychology to understand how people think and decide. I learned to code to be able to express all my ideas. Today I combine both: leading AI products that people genuinely love.</p>
     <p>At Frontnow I head the Experience department and lead two enterprise AI products with the team: Advise, a conversational AI sales assistant live across European retail, and Enhance, AI-powered product data enrichment for retailers.</p>
   </section>
 
@@ -200,7 +218,7 @@
   <section class="band" id="vibin">
     <div class="wrap">
       <h2>Vibin&rsquo; life</h2>
-      <p>Most of what I make outside work, I make with AI in the loop. I call it vibin&rsquo; life.</p>
+      <p>Using AI to express myself fully, in every medium I love.</p>
       <ul>
         <li>I generate music for the joy of hearing an idea turn into a song.</li>
         <li>I invent recipes, and my kitchen is the test lab.</li>
@@ -227,6 +245,7 @@
   var name = document.querySelector(".name");
   var lines = Array.prototype.slice.call(document.querySelectorAll("h1 .line"));
   var caret = document.querySelector(".caret");
+  var more = document.querySelector(".more");
   if (reduce || !name || !caret || lines.length === 0) return;
 
   var texts = lines.map(function (l) { return l.textContent; });
@@ -290,10 +309,14 @@
 
   var gateOpen = false;
   var pending = [];
+  function markIn(el) {
+    el.classList.add("in");
+    if (more && el.id === "about") { more.classList.add("gone"); }
+  }
   function openGate() {
     if (gateOpen) return;
     gateOpen = true;
-    pending.forEach(function (el) { el.classList.add("in"); });
+    pending.forEach(markIn);
     pending = [];
   }
   window.addEventListener("scroll", openGate, { once: true, passive: true });
@@ -304,7 +327,7 @@
       entries.forEach(function (e) {
         if (e.isIntersecting) {
           io.unobserve(e.target);
-          if (gateOpen) { e.target.classList.add("in"); } else { pending.push(e.target); }
+          if (gateOpen) { markIn(e.target); } else { pending.push(e.target); }
         }
       });
     }, { threshold: 0.15, rootMargin: "0px 0px -18% 0px" });
