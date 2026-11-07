@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Eva Kalbfell</title>
+<title>Eva Kalbfell | Product Leader. AI Builder. Psychologist.</title>
+<meta name="description" content="Eva Kalbfell leads AI products from first idea to production. VP Product at Frontnow, Berlin.">
+<meta property="og:title" content="Eva Kalbfell | Product Leader. AI Builder. Psychologist.">
+<meta property="og:description" content="I lead AI products from first idea to production. VP Product at Frontnow, Berlin.">
+<meta property="og:url" content="https://evakalbfell.github.io/">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&display=swap" rel="stylesheet">
 <style>
@@ -91,7 +96,7 @@
   @keyframes fadeout { to { opacity: 0; } }
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   ::selection { background: var(--coral); color: #fff; }
-  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
   .hero .intro { margin-top: 32px; max-width: 34ch; font-size: 1.1875rem; transition: opacity .6s ease; }
   body.animating .intro { opacity: 0; }
@@ -202,8 +207,7 @@
   <section class="wrap contact" id="contact">
     <h2>Say hi</h2>
     <p>The best place to find me is LinkedIn.</p>
-    <!-- TODO: replace # with Eva's LinkedIn URL before deploying -->
-    <a class="cta" href="https://www.linkedin.com/">Find me on LinkedIn</a>
+    <a class="cta" href="https://www.linkedin.com/in/eva-kalbfell/">Find me on LinkedIn</a>
   </section>
 </main>
 
@@ -297,7 +301,7 @@
           if (gateOpen) { e.target.classList.add("in"); } else { pending.push(e.target); }
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.15, rootMargin: "0px 0px -18% 0px" });
     sections.forEach(function (s) { s.classList.add("reveal"); io.observe(s); });
   }
 })();
