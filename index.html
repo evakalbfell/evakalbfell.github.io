@@ -32,28 +32,6 @@
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --paper: #101b30;
-      --ink: #edf0f6;
-      --muted: #9aa7bf;
-      --band: #1a2a4a;
-      --band-ink: #f4f6fa;
-      --band-muted: #aeb9d0;
-      --rule: #273755;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --paper: #101b30;
-    --ink: #edf0f6;
-    --muted: #9aa7bf;
-    --band: #1a2a4a;
-    --band-ink: #f4f6fa;
-    --band-muted: #aeb9d0;
-    --rule: #273755;
-  }
   html { scroll-padding-top: env(safe-area-inset-top, 0px); }
   *, *::before, *::after { box-sizing: inherit; margin: 0; }
   body {
@@ -62,6 +40,7 @@
     font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.65;
+    transition: background-color .5s ease, color .5s ease;
   }
   a { color: inherit; text-decoration-color: var(--coral); text-decoration-thickness: 2px; text-underline-offset: 3px; }
   a:hover { color: var(--coral); }
@@ -70,8 +49,51 @@
 
   .wrap { max-width: 680px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
 
+  /* Mode switch */
+  body[data-mode="work"] .mode-vibe { display: none; }
+  body[data-mode="vibe"] .mode-work { display: none; }
+  body[data-mode="vibe"] {
+    color-scheme: dark;
+    --paper: #16233f;
+    --ink: #f4f6fa;
+    --muted: #aeb9d0;
+    --rule: #2a3a5c;
+  }
+  body[data-mode="vibe"] .more { opacity: 0; pointer-events: none; }
+  body:not([data-mode]) .mode-toggle { display: none; }
+
+  .mode-toggle {
+    position: absolute;
+    top: 92px;
+    right: 24px;
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border: 2px solid var(--rule);
+    border-radius: 999px;
+    z-index: 6;
+    transition: opacity .5s ease;
+  }
+  .mode-toggle button {
+    font: inherit;
+    font-size: .9375rem;
+    font-weight: 500;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .mode-toggle button[aria-pressed="true"] { background: var(--coral); color: #fff; }
+  .mode-toggle button:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
+  @media (max-width: 600px) {
+    .mode-toggle { position: static; margin-bottom: 28px; }
+  }
+  body.animating .mode-toggle { opacity: 0; }
+
   /* Hero */
-  .hero { padding-top: 96px; padding-bottom: 72px; }
+  .hero { position: relative; padding-top: 96px; padding-bottom: 72px; }
   .hero .name {
     font-weight: 900;
     color: var(--ink);
@@ -104,7 +126,7 @@
   ::selection { background: var(--coral); color: #fff; }
   .reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
-  .hero .intro { margin-top: 32px; max-width: 34ch; font-size: 1.1875rem; transition: opacity .6s ease; }
+  .hero .intro { margin-top: 32px; max-width: 38ch; font-size: 1.1875rem; transition: opacity .6s ease; }
   body.animating .intro { opacity: 0; }
   .hero .intro strong { font-weight: 500; }
   .more {
@@ -150,10 +172,32 @@
   p + p { margin-top: 1em; }
   .muted { color: var(--muted); }
 
+  /* Selected work */
+  .project + .project { margin-top: 44px; }
+  .project h3 { font-weight: 900; font-size: 1.125rem; margin-bottom: 10px; }
+  .project .tag { font-weight: 400; color: var(--muted); font-size: 1rem; margin-left: 6px; }
+  .project .stats { color: var(--muted); }
+  .project .stats b { color: var(--coral); font-weight: 900; }
+
   /* Principles */
   .principles { list-style: none; padding: 0; }
   .principles li + li { margin-top: 1.25em; }
   .principles b { font-weight: 900; }
+  .crossover { margin-top: 32px; color: var(--muted); }
+  .linklike {
+    font: inherit;
+    border: 0;
+    background: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--coral);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+  .linklike:hover { color: var(--coral); }
+  .linklike:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; border-radius: 2px; }
 
   /* Vibin' band */
   .band { background: var(--band); color: var(--band-ink); border-top: none; position: relative; }
@@ -196,6 +240,10 @@
 <body>
 
 <header class="hero wrap">
+  <div class="mode-toggle" role="group" aria-label="Site mode">
+    <button type="button" data-mode="work" aria-pressed="true">The work</button>
+    <button type="button" data-mode="vibe" aria-pressed="false">The vibe</button>
+  </div>
   <p class="name">Eva Kalbfell</p>
   <h1 aria-label="Product Leader. AI Builder. Psychologist.">
     <span class="line">Product Leader.</span>
@@ -207,25 +255,39 @@
 </header>
 
 <main>
-  <section class="wrap" id="about">
+  <section class="wrap mode-work" id="about">
     <h2>About</h2>
-    <p>I studied psychology to understand how people think and decide. I learned to code to be able to express all my ideas. Today I combine both: leading AI products that people genuinely love.</p>
-    <p>At Frontnow I head the Experience department and lead two enterprise AI products with the team: Advise, a conversational AI sales assistant live across European retail, and Enhance, AI-powered product data enrichment for retailers.</p>
+    <p>10+ years in product and UX. I love translating visions into reality, into products people genuinely love. These days, I do it in and with AI.</p>
+    <p>At Frontnow I head the Experience department and lead two enterprise AI products with the team: Advise, a conversational AI sales assistant, and Enhance, AI-powered product data enrichment. Both are used by enterprise retailers across Europe.</p>
   </section>
 
-  <section class="wrap" id="how-i-work">
+  <section class="wrap mode-work" id="selected-work">
+    <h2>Selected work</h2>
+    <div class="project">
+      <h3>Advise<span class="tag">conversational AI sales assistant</span></h3>
+      <p>An AI sales advisor embedded in enterprise retail platforms, guiding shoppers to the right decision through conversation. I own product strategy and delivery end to end: drove Advise 4, a fully agentic architecture, from concept to launch with the team, and built our LLM evaluation practice to make AI quality measurable.</p>
+      <p class="stats">Live at enterprise scale: <b>45M+</b> monthly page views, <b>65,000+</b> conversations per month, up to <b>+27%</b> conversion and <b>+18%</b> higher cart values in production.</p>
+    </div>
+    <div class="project">
+      <h3>Enhance<span class="tag">AI-powered product data enrichment</span></h3>
+      <p>AI that generates and enriches product data for enterprise retail catalogs, automating what would otherwise be years of manual content work. I drove Enhance from zero to one with the team, from client co-innovation to a standardized, market-ready product, owning vision, feature set, GTM and pricing.</p>
+      <p class="stats">Live with multiple enterprise retail clients: <b>115,000+</b> products enriched, <b>900,000+</b> AI-generated data points.</p>
+    </div>
+  </section>
+
+  <section class="wrap mode-work" id="how-i-work">
     <h2>How I work</h2>
     <ul class="principles">
-      <li><b>Think in systems.</b> Products live in systems of people, data and incentives. I design for the whole, not the feature.</li>
-      <li><b>Measure what matters.</b> Shipping is not the finish line. I define what good looks like before we build, then hold the product to it.</li>
-      <li><b>Design for humans.</b> AI is only useful when people trust it. I start with the human, not the model.</li>
+      <li><b>Think in systems, not features.</b> Intelligent products are living systems. Every decision creates a feedback loop, and structure determines intelligence.</li>
+      <li><b>Measure what matters.</b> Data is not proof; it&rsquo;s conversation. Everything is an iteration. Metrics exist to guide learning, not to declare success.</li>
+      <li><b>Design for humans.</b> AI systems exist to serve human understanding, not replace it. The goal is to turn complexity into experiences that empower.</li>
     </ul>
+    <p class="crossover">This is not just how I work. It&rsquo;s how I live: <button type="button" class="linklike" data-goto="vibe">switch to the vibe</button>.</p>
   </section>
 
-  <section class="band" id="vibin">
+  <section class="band mode-vibe" id="vibin">
     <div class="wrap">
       <h2>Vibin&rsquo; life</h2>
-      <p>Using AI to express myself fully, in every medium I love.</p>
       <ul>
         <li>I generate music to sing myself a new story about myself and humanity.</li>
         <li>I invent recipes and my kitchen is the test lab.</li>
@@ -249,42 +311,50 @@
 <script>
 (function () {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var name = document.querySelector(".name");
+  var body = document.body;
+  var nameEl = document.querySelector(".name");
+  var h1 = document.querySelector("h1");
   var lines = Array.prototype.slice.call(document.querySelectorAll("h1 .line"));
   var caret = document.querySelector(".caret");
   var more = document.querySelector(".more");
-  if (reduce || !name || !caret || lines.length === 0) return;
+  var intro = document.querySelector(".intro");
+  var toggle = document.querySelector(".mode-toggle");
+  if (!nameEl || !caret || lines.length === 0) return;
 
-  var texts = lines.map(function (l) { return l.textContent; });
-  lines.forEach(function (l) { l.textContent = ""; });
-  caret.classList.remove("idle");
-  document.body.classList.add("animating");
-  name.style.opacity = "0";
+  var MODES = {
+    work: {
+      lines: ["Product Leader.", "AI Builder.", "Psychologist."],
+      intro: "I lead AI products from first idea to production. <strong>VP Product at Frontnow, Berlin.</strong>"
+    },
+    vibe: {
+      lines: ["Music Maker.", "Kitchen Chemist.", "World Dreamer."],
+      intro: "Using AI to express myself fully, in every medium I love."
+    }
+  };
 
-  function start() {
-    var r = name.getBoundingClientRect();
-    var dx = window.innerWidth / 2 - (r.left + r.width / 2);
-    var dy = window.innerHeight / 2 - (r.top + r.height / 2);
-    var scale = Math.min(3.4, (window.innerWidth * 0.8) / r.width);
-    name.style.transformOrigin = "center center";
-    name.style.transform = "translate(" + dx + "px, " + dy + "px) scale(" + scale + ")";
-    requestAnimationFrame(function () {
-      name.style.transition = "opacity .45s ease";
-      name.style.opacity = "1";
-      setTimeout(function () {
-        name.style.transition = "transform .75s cubic-bezier(.2,.7,.2,1)";
-        name.style.transform = "none";
-        setTimeout(typeLines, 800);
-      }, 950);
-    });
+  var typeToken = 0;
+
+  function setTexts(mode) {
+    var m = MODES[mode];
+    typeToken++;
+    lines.forEach(function (l, i) { l.textContent = m.lines[i]; });
+    lines[lines.length - 1].appendChild(caret);
+    if (intro) { intro.innerHTML = m.intro; }
+    if (h1) { h1.setAttribute("aria-label", m.lines.join(" ")); }
   }
 
-  function typeLines() {
+  function typeInto(mode, done) {
+    var token = ++typeToken;
+    var m = MODES[mode];
+    lines.forEach(function (l) { l.textContent = ""; });
+    caret.classList.remove("idle");
     var li = 0;
     function nextLine() {
-      var line = lines[li], text = texts[li], ci = 0;
+      if (token !== typeToken) { return; }
+      var line = lines[li], text = m.lines[li], ci = 0;
       line.appendChild(caret);
       function tick() {
+        if (token !== typeToken) { return; }
         if (ci < text.length) {
           line.insertBefore(document.createTextNode(text.charAt(ci)), caret);
           ci++;
@@ -293,8 +363,8 @@
           li++;
           if (li >= lines.length) {
             caret.classList.add("idle");
-            document.body.classList.remove("animating");
-            openGate();
+            if (h1) { h1.setAttribute("aria-label", m.lines.join(" ")); }
+            if (done) { done(); }
           } else {
             setTimeout(nextLine, 380);
           }
@@ -305,14 +375,43 @@
     nextLine();
   }
 
-  if (document.fonts && document.fonts.ready) {
-    var done = false;
-    var go = function () { if (!done) { done = true; start(); } };
-    document.fonts.ready.then(go);
-    setTimeout(go, 900);
-  } else {
-    start();
+  function setPressed(mode) {
+    if (!toggle) { return; }
+    Array.prototype.forEach.call(toggle.querySelectorAll("button"), function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-mode") === mode));
+    });
   }
+
+  function setMode(mode, animate) {
+    body.setAttribute("data-mode", mode);
+    setPressed(mode);
+    if (intro) { intro.innerHTML = MODES[mode].intro; }
+    if (history.replaceState) {
+      history.replaceState(null, "", mode === "vibe" ? "#vibe" : location.pathname + location.search);
+    }
+    openGate();
+    if (animate && !reduce) {
+      typeInto(mode);
+    } else {
+      setTexts(mode);
+    }
+  }
+
+  if (toggle) {
+    toggle.addEventListener("click", function (e) {
+      var t = e.target;
+      while (t && t !== toggle && !(t.getAttribute && t.getAttribute("data-mode"))) { t = t.parentNode; }
+      if (!t || t === toggle) { return; }
+      var mode = t.getAttribute("data-mode");
+      if (mode && mode !== body.getAttribute("data-mode")) { setMode(mode, true); }
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-goto]"), function (el) {
+    el.addEventListener("click", function () {
+      setMode(el.getAttribute("data-goto"), true);
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    });
+  });
 
   var gateOpen = false;
   var pending = [];
@@ -321,13 +420,12 @@
     if (more && el.id === "about") { more.classList.add("gone"); }
   }
   function openGate() {
-    if (gateOpen) return;
+    if (gateOpen) { return; }
     gateOpen = true;
     pending.forEach(markIn);
     pending = [];
   }
   window.addEventListener("scroll", openGate, { once: true, passive: true });
-
   if ("IntersectionObserver" in window) {
     var sections = document.querySelectorAll("main section");
     var io = new IntersectionObserver(function (entries) {
@@ -339,6 +437,53 @@
       });
     }, { threshold: 0.15, rootMargin: "0px 0px -18% 0px" });
     sections.forEach(function (s) { s.classList.add("reveal"); io.observe(s); });
+  }
+
+  var initialMode = location.hash === "#vibe" ? "vibe" : "work";
+  body.setAttribute("data-mode", initialMode);
+  setPressed(initialMode);
+
+  if (reduce) {
+    setTexts(initialMode);
+    return;
+  }
+
+  lines.forEach(function (l) { l.textContent = ""; });
+  caret.classList.remove("idle");
+  body.classList.add("animating");
+  if (intro) { intro.innerHTML = MODES[initialMode].intro; }
+  nameEl.style.opacity = "0";
+
+  function start() {
+    var r = nameEl.getBoundingClientRect();
+    var dx = window.innerWidth / 2 - (r.left + r.width / 2);
+    var dy = window.innerHeight / 2 - (r.top + r.height / 2);
+    var scale = Math.min(3.4, (window.innerWidth * 0.8) / r.width);
+    nameEl.style.transformOrigin = "center center";
+    nameEl.style.transform = "translate(" + dx + "px, " + dy + "px) scale(" + scale + ")";
+    requestAnimationFrame(function () {
+      nameEl.style.transition = "opacity .45s ease";
+      nameEl.style.opacity = "1";
+      setTimeout(function () {
+        nameEl.style.transition = "transform .75s cubic-bezier(.2,.7,.2,1)";
+        nameEl.style.transform = "none";
+        setTimeout(function () {
+          typeInto(initialMode, function () {
+            body.classList.remove("animating");
+            openGate();
+          });
+        }, 800);
+      }, 950);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    var done = false;
+    var go = function () { if (!done) { done = true; start(); } };
+    document.fonts.ready.then(go);
+    setTimeout(go, 900);
+  } else {
+    start();
   }
 })();
 </script>
